@@ -1,4 +1,5 @@
 import kotlin.math.PI
+import kotlin.math.floor
 import kotlin.math.pow
 
 const val PARTICLE_MASS = 70
@@ -17,7 +18,7 @@ val NORMALIZATION_PRESSURE_FORCE = (10 * PARTICLE_MASS) / (PI * SMOOTHING_LENGTH
 val NORMALIZATION_VISCOUS_FORCE = (40 * DYNAMIC_VISCOSITY * PARTICLE_MASS) / (PI * SMOOTHING_LENGTH.toDouble().pow(5))
 
 fun SPH(maxParticles: Int, domainWidth: Int, domainHeight: Int): Double {
-
+    if (maxParticles <= 0) return 0.0
     val DOMAIN_X_LIM = doubleArrayOf(SMOOTHING_LENGTH.toDouble(), (domainWidth - SMOOTHING_LENGTH).toDouble())
     val DOMAIN_Y_LIM = doubleArrayOf(SMOOTHING_LENGTH.toDouble(), (domainHeight - SMOOTHING_LENGTH).toDouble())
 
@@ -138,4 +139,19 @@ fun SPH(maxParticles: Int, domainWidth: Int, domainHeight: Int): Double {
         result += maxForceList[i]
     }
     return result / maxForceList.size
+}
+
+fun calculateMeanMaxSPH(width: Int, height: Int, meanPeopleCount: Int, maxPeopleCount: Int): Pair<Double, Double> {
+    val mean = floor(SPH(meanPeopleCount, width, height) * 100) / 100
+    val max = floor(SPH(maxPeopleCount, width, height)* 100) / 100
+    return Pair(mean, max)
+}
+
+fun calculateSPH(width: Int, height: Int, current: Int, peopleCount: List<Int>): List<Double> {
+    val result = ArrayList<Double>()
+    result.add(floor(SPH(current, width, height) * 100) / 100)
+    for (element in peopleCount) {
+        result.add(floor(SPH(element, width, height) * 100) / 100)
+    }
+    return result
 }
