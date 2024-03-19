@@ -1,3 +1,5 @@
+package util
+
 enum class Place(val list: List<String>) {
     PLACE_CD(
         listOf(

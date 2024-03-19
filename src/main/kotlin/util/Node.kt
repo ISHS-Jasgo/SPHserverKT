@@ -1,3 +1,5 @@
+package util
+
 class Node {
     var coords: Vector = Vector()
 

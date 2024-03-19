@@ -1,6 +1,7 @@
+package util
+
 import java.util.*
 import kotlin.Comparator
-import kotlin.collections.ArrayList
 import kotlin.math.abs
 
 class KDTree(nodes: List<Node>?) {
@@ -46,6 +47,7 @@ class KDTree(nodes: List<Node>?) {
             }
         }.rangeSearch(root, true)
     }
+
     fun insert(coords: Vector) {
         val node: Node = Node(coords)
         if (root == null) root = node else insert(node, root!!, true)

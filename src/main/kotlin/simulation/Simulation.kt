@@ -1,23 +1,19 @@
+package simulation
+
+import util.Collider
+import util.KDTree
+import util.Node
+import util.Vector
 import kotlin.math.PI
 import kotlin.math.floor
 import kotlin.math.pow
+import kotlin.math.sin
 
-const val PARTICLE_MASS = 70
-const val ISOTROPIC_EXPONENT = 20
-const val BASE_DENSITY = 1
-const val SMOOTHING_LENGTH = 5
-const val DYNAMIC_VISCOSITY = 0.1
-const val DAMPING_COEFFICIENT = -0.9
-//const val GRAVITY = -9.8
+val objects: List<Collider> = listOf(
 
-const val TIME_STEP_LENGTH = 0.01
-const val N_TIME_STEPS = 5
+)
 
-val NORMALIZATION_DENSITY = (4 * PARTICLE_MASS) / (PI * SMOOTHING_LENGTH.toDouble().pow(8.0))
-val NORMALIZATION_PRESSURE_FORCE = (10 * PARTICLE_MASS) / (PI * SMOOTHING_LENGTH.toDouble().pow(5)) * (-1)
-val NORMALIZATION_VISCOUS_FORCE = (40 * DYNAMIC_VISCOSITY * PARTICLE_MASS) / (PI * SMOOTHING_LENGTH.toDouble().pow(5))
-
-fun SPH(maxParticles: Int, domainWidth: Int, domainHeight: Int): Double {
+fun realSPH(maxParticles: Int, domainWidth: Int, domainHeight: Int, gradient: Double): Double {
     if (maxParticles <= 0) return 0.0
     val DOMAIN_X_LIM = doubleArrayOf(SMOOTHING_LENGTH.toDouble(), (domainWidth - SMOOTHING_LENGTH).toDouble())
     val DOMAIN_Y_LIM = doubleArrayOf(SMOOTHING_LENGTH.toDouble(), (domainHeight - SMOOTHING_LENGTH).toDouble())
@@ -99,14 +95,14 @@ fun SPH(maxParticles: Int, domainWidth: Int, domainHeight: Int): Double {
         }
 
         // calculate gravity force
-//        for (i in 0 until maxParticles) {
-//            forces[i] += Vector(0.0, GRAVITY)
-//        }
+        for (i in 0 until maxParticles) {
+            forces[i] += Vector(0.0, 10 * sin(PI * gradient / 180))
+        }
 
         // calculate new velocities and positions
         for (i in 0 until maxParticles) {
-            velocities[i] += forces[i] * TIME_STEP_LENGTH / densities[i]
-            positions[i] += velocities[i] * TIME_STEP_LENGTH
+            velocities[i] += forces[i] * simulation.TIME_STEP_LENGTH / densities[i]
+            positions[i] += velocities[i] * simulation.TIME_STEP_LENGTH
         }
 
         // check for collisions with walls
@@ -127,6 +123,16 @@ fun SPH(maxParticles: Int, domainWidth: Int, domainHeight: Int): Double {
                 positions[i].y = DOMAIN_Y_LIM[1]
                 velocities[i].y *= DAMPING_COEFFICIENT
             }
+            objects.forEach { collider ->
+                if (collider.isXColliding(positions[i].x, SMOOTHING_LENGTH.toDouble())) {
+                    positions[i].x = collider.x
+                    velocities[i].x *= DAMPING_COEFFICIENT
+                }
+                if (collider.isYColliding(positions[i].y, SMOOTHING_LENGTH.toDouble())) {
+                    positions[i].y = collider.y
+                    velocities[i].y *= DAMPING_COEFFICIENT
+                }
+            }
         }
 
 //        print top 10 forces size
@@ -140,18 +146,21 @@ fun SPH(maxParticles: Int, domainWidth: Int, domainHeight: Int): Double {
     }
     return result / maxForceList.size
 }
-
-fun calculateMeanMaxSPH(width: Int, height: Int, meanPeopleCount: Int, maxPeopleCount: Int): Pair<Double, Double> {
-    val mean = floor(SPH(meanPeopleCount, width, height) * 100) / 100
-    val max = floor(SPH(maxPeopleCount, width, height)* 100) / 100
-    return Pair(mean, max)
-}
-
-fun calculateSPH(width: Int, height: Int, current: Int, peopleCount: List<Int>): List<Double> {
-    val result = ArrayList<Double>()
-    result.add(floor(SPH(current, width, height) * 100) / 100)
-    for (element in peopleCount) {
-        result.add(floor(SPH(element, width, height) * 100) / 100)
+fun main(args: Array<String>) {
+    val domainWidth = 4
+    val domainHeight = 190
+    val maxParticles = 1000
+    val objects = ArrayList<Collider>()
+//    objects.add(Collider(1.25, 55.0, 2.5, 110.0))
+//    objects.add(Collider(9.75, 55.0, 2.5, 110.0))
+//    objects.add(Collider(5.5, 160.0, 2.0, 3.0))
+//    objects.add(Collider(5.5, 200.0, 2.0, 3.0))
+    for (i in 0 until 5) {
+        val randomX = floor(Math.random() * 10)
+        val randomY = floor(Math.random() * 500)
+        objects.add(Collider(randomX, randomY, 1.0, 3.0))
     }
-    return result
+    val result = realSPH(maxParticles, domainWidth, domainHeight, 10.0)
+    println(result)
+    println(SPH(1000, 4, 190))
 }
