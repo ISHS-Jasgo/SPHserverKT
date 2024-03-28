@@ -19,7 +19,7 @@ class PredictDataListener {
         }
     }
     private fun getPredictData(): JSONObject {
-        val url = URL("http://jrh.ishs.co.kr:3000/predict/all")
+        val url = URL("http://jrh-ishs.kro.kr:8000/predict/all")
         val conn = url.openConnection() as HttpURLConnection
         conn.requestMethod = "GET"
         val inputStream = conn.inputStream

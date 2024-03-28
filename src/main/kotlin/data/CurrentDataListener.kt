@@ -33,7 +33,7 @@ class CurrentDataListener {
     
 
     private fun getPeopleCount(): HashMap<String, Int> {
-        val url = URL("http://app.ishs.co.kr:5000/people")
+        val url = URL("http://jrh-ishs.kro.kr:5000/people")
         val conn = url.openConnection() as HttpURLConnection
         conn.requestMethod = "GET"
         val inputStream = conn.inputStream
@@ -59,7 +59,7 @@ class CurrentDataListener {
     }
 
     private fun getPopulationChange(): HashMap<String, Double> {
-        val url = URL("http://app.ishs.co.kr:5000/peopleChangeRate")
+        val url = URL("http://jrh-ishs.kro.kr:5000/peopleChangeRate")
         val conn = url.openConnection() as HttpURLConnection
         conn.requestMethod = "GET"
         val inputStream = conn.inputStream
