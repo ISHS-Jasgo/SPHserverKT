@@ -1,6 +1,6 @@
 <component name="ArtifactManager">
   <artifact type="jar" build-on-make="true" name="SPHserver:jar">
-    <output-path>$PROJECT_DIR$/out/artifacts/SPHserver_jar</output-path>
+    <output-path>$USER_HOME$/Downloads</output-path>
     <root id="archive" name="SPHserver.jar">
       <element id="module-output" name="SPHserver" />
       <element id="extracted-dir" path="$USER_HOME$/Downloads/json-simple-1.1.1.jar" path-in-jar="/" />
